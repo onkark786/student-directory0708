@@ -8,14 +8,14 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { UserPlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+const phoneRegex = /^\d{10}$/;
 
 const studentSchema = z.object({
-  name: z.string().trim().min(1, "Name is required").max(100, "Name must be under 100 characters"),
-  email: z.string().trim().email("Invalid email address").max(255, "Email must be under 255 characters"),
-  phone: z.string().trim().regex(phoneRegex, "Invalid phone number (e.g. +1234567890)"),
-  parentName: z.string().trim().min(1, "Parent name is required").max(100, "Name must be under 100 characters"),
-  parentPhone: z.string().trim().regex(phoneRegex, "Invalid phone number (e.g. +1234567890)"),
+  name: z.string().trim().min(2, "Name must be at least 2 characters").max(100, "Name must be under 100 characters").regex(/^[a-zA-Z\s'-]+$/, "Name can only contain letters, spaces, hyphens, and apostrophes"),
+  email: z.string().trim().toLowerCase().email("Please enter a valid email address (e.g. john@school.edu)").max(255, "Email must be under 255 characters"),
+  phone: z.string().trim().regex(phoneRegex, "Phone must be exactly 10 digits (e.g. 9876543210)"),
+  parentName: z.string().trim().min(2, "Parent name must be at least 2 characters").max(100, "Name must be under 100 characters").regex(/^[a-zA-Z\s'-]+$/, "Name can only contain letters, spaces, hyphens, and apostrophes"),
+  parentPhone: z.string().trim().regex(phoneRegex, "Phone must be exactly 10 digits (e.g. 9876543210)"),
 });
 
 type StudentFormValues = z.infer<typeof studentSchema>;
@@ -81,7 +81,7 @@ const StudentForm = ({ onAdd }: StudentFormProps) => {
             <FormField control={form.control} name="phone" render={({ field }) => (
               <FormItem>
                 <FormLabel>Student Phone</FormLabel>
-                <FormControl><Input type="tel" placeholder="+1234567890" maxLength={16} {...field} /></FormControl>
+                <FormControl><Input type="tel" placeholder="9876543210" maxLength={10} {...field} onChange={(e) => field.onChange(e.target.value.replace(/\D/g, ""))} /></FormControl>
                 <FormMessage />
               </FormItem>
             )} />
@@ -96,7 +96,7 @@ const StudentForm = ({ onAdd }: StudentFormProps) => {
               <FormField control={form.control} name="parentPhone" render={({ field }) => (
                 <FormItem>
                   <FormLabel>Parent Phone</FormLabel>
-                  <FormControl><Input type="tel" placeholder="+1234567890" maxLength={16} {...field} /></FormControl>
+                  <FormControl><Input type="tel" placeholder="9876543210" maxLength={10} {...field} onChange={(e) => field.onChange(e.target.value.replace(/\D/g, ""))} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )} />
